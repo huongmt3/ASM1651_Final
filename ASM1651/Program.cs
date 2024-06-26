@@ -43,12 +43,18 @@ namespace Code1651.ASM
                         library1.ReceiveBook();
                         break;
                     case "9":
-                        library1.UpdateEmployee();
+                        library1.UpdateBorrower();
                         break;
                     case "10":
                         library1.FindMostFrequentBorrower();
                         break;
                     case "11":
+                        library1.AddNewBorrower();
+                        break;
+                    case "12":
+                        library1.ViewLibrarianInfo();
+                        break;
+                    case "13":
                         exit = true;
                         break;
                     default:

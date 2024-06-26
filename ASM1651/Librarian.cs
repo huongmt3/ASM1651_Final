@@ -10,7 +10,6 @@ namespace Code1651.ASM
         //properties
         public decimal baseSalary;
         public decimal commission;
-        public List<BookLoan> BookLoans = new List<BookLoan>();
 
         //constructor
         public Librarian(string fullName, string phoneNumber, string emailAddress, decimal baseSalary, decimal commission) : base(fullName, phoneNumber, emailAddress)
@@ -99,7 +98,7 @@ namespace Code1651.ASM
         //InputInfo
         public override void InputInfo()
         {
-            Console.WriteLine("Enter Name: ");
+            Console.WriteLine("Enter Librarian's Name: ");
             fullName = Console.ReadLine();
             Console.WriteLine("Enter Phone Number: ");
             phoneNumber = Console.ReadLine();
@@ -122,6 +121,9 @@ namespace Code1651.ASM
         //CalculateIncome
         public decimal CalculateIncome()
         {
+            Console.WriteLine("======Calculate Income======");
+            Console.WriteLine("Income = Base Salaray + Commission");
+            Console.WriteLine($"Income = {baseSalary} + {commission}");
             return baseSalary + commission;
         }
 

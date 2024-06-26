@@ -6,14 +6,14 @@ namespace Code1651.ASM
     {
         //properties
         public int borrowingId;
-        public Employee borrower = new Employee();
+        public Borrower borrower = new Borrower();
         public Book bookOnLoan = new Book();
         public DateTime issueDate;
         public DateTime dueDate;
         public DateTime returnDate;
 
         //constructor
-        public BookLoan(int borrowingId, Employee borrower, Book bookOnLoan, DateTime issueDate, uint loanDurationDays)
+        public BookLoan(int borrowingId, Borrower borrower, Book bookOnLoan, DateTime issueDate, uint loanDurationDays)
         {
             SetBorrowingId(borrowingId);
             SetBorrower(borrower);
@@ -39,12 +39,12 @@ namespace Code1651.ASM
         }
 
         //get-set for Borrower
-        public Employee GetBorrower()
+        public Borrower GetBorrower()
         {
             return borrower;
         }
 
-        public void SetBorrower(Employee borrower)
+        public void SetBorrower(Borrower borrower)
         {
             this.borrower = borrower;
         }

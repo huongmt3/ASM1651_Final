@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Code1651.ASM
 {
-    internal class Employee : Person
+    internal class Borrower : Person
     {
         //properties
-        public string employeeId;
+        public string borrowerId;
         public List<BookLoan> BookLoans = new List<BookLoan>();
 
         //constructor
-        public Employee(string fullName, string phoneNumber, string emailAddress, string employeeId) : base(fullName, phoneNumber, emailAddress)
+        public Borrower(string fullName, string phoneNumber, string emailAddress, string employeeId) : base(fullName, phoneNumber, emailAddress)
         {
             SetFullName(fullName);
             SetPhoneNumber(phoneNumber);
@@ -20,9 +20,9 @@ namespace Code1651.ASM
         }
 
         //default constructor
-        public Employee() : base("", "", "")
+        public Borrower() : base("", "", "")
         {
-            employeeId = "";
+            borrowerId = "";
         }
 
         //override set methods with validation
@@ -64,7 +64,7 @@ namespace Code1651.ASM
         //get-set for Employee ID
         public string GetEmployeeId()
         {
-            return employeeId;
+            return borrowerId;
         }
 
         public void SetEmployeeId(string employeeId)
@@ -84,19 +84,19 @@ namespace Code1651.ASM
             phoneNumber = Console.ReadLine();
             Console.WriteLine("Enter Email Address: ");
             emailAddress = Console.ReadLine();
-            Console.WriteLine("Enter Employee's ID: ");
-            employeeId = Console.ReadLine();
+            Console.WriteLine("Enter Borrower's ID: ");
+            borrowerId = Console.ReadLine();
         }
 
         //ShowInfo
         public override void ShowInfo()
         {
             Console.WriteLine("\u001b[32m\n--------------------------");
-            Console.WriteLine("Employee Details");
+            Console.WriteLine("Borrower Details");
             Console.WriteLine($"Full Name: {fullName}");
             Console.WriteLine($"Phone Number: {phoneNumber}");
             Console.WriteLine($"Email Address: {emailAddress}");
-            Console.WriteLine($"Employee ID: {employeeId}");
+            Console.WriteLine($"Borrower ID: {borrowerId}");
             Console.WriteLine("--------------------------\u001b[0m");
         }
     }

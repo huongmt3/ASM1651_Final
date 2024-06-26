@@ -12,11 +12,16 @@ namespace Code1651.ASM
         //properties
         public string libraryName { get; set; }
         public List<Book> Books = new List<Book>();
-        public List<Employee> Borrowers = new List<Employee>();
+        public List<Borrower> Borrowers = new List<Borrower>();
         public List<BookLoan> BookLoans = new List<BookLoan>();
+        public Librarian Librarian { get; set; }
 
         //constructor
-        public Library(string libraryName) => this.libraryName = libraryName;
+        public Library(string libraryName, Librarian librarian)
+        {
+            this.libraryName = libraryName;
+            this.Librarian = librarian;
+        }
 
         //singleton
         private static Library instance = null;
@@ -30,9 +35,11 @@ namespace Code1651.ASM
                 {
                     if (instance == null)
                     {
+                        Librarian librarian = new Librarian();
+                        librarian.InputInfo();
                         Console.WriteLine("Enter Library Name: ");
                         string libraryName = Console.ReadLine();
-                        instance = new Library(libraryName);
+                        instance = new Library(libraryName, librarian);
                     }
                     return instance;
                 }
@@ -44,6 +51,7 @@ namespace Code1651.ASM
         {
             Console.WriteLine("\u001b[33m\n============================================");
             Console.WriteLine($"WELCOME TO {libraryName.ToUpper()} LIBRARY!");
+            Console.WriteLine($"Librarian: {Librarian.fullName}");
             Console.WriteLine("============================================\u001b[0m");
         }
 
@@ -57,11 +65,19 @@ namespace Code1651.ASM
             Console.WriteLine("4. Add a new book");
             Console.WriteLine("5. Search book by title");
             Console.WriteLine("6. Update/Delete a book by book ID");
-            Console.WriteLine("7. Lend a book for an employee");
-            Console.WriteLine("8. Receive a borrowed book from an employee");
-            Console.WriteLine("9. Update employee's information");
+            Console.WriteLine("7. Lend a book for an borrower");
+            Console.WriteLine("8. Receive a borrowed book from an borrower");
+            Console.WriteLine("9. Update borrower's information");
             Console.WriteLine("10. Display top 1 borrower");
-            Console.WriteLine("11. Exit\u001b[0m");
+            Console.WriteLine("11. Add new borrower");
+            Console.WriteLine("12. View librarian's information");
+            Console.WriteLine("13. Exit\u001b[0m");
+        }
+
+        //viewLibrarianInfo
+        public void ViewLibrarianInfo()
+        {
+            Librarian.ShowInfo();
         }
 
         //AddBook
@@ -120,6 +136,7 @@ namespace Code1651.ASM
                     if (bl.returnDate == DateTime.MinValue)
                         bl.LoanForm();
                     bl.bookOnLoan.ShowBookOnLoan();
+                    Console.WriteLine($"Borrowed by: {bl.borrower.fullName} (ID: {bl.borrower.borrowerId})");
                     bl.ShowTimeLine();
                     Console.WriteLine("=============================");
                     Console.WriteLine();
@@ -166,48 +183,37 @@ namespace Code1651.ASM
             }
         }
 
-        //=======Employee Functions========
-        //Update Employee Info
-        public void UpdateEmployee()
+        //=======Borrower Functions========
+
+        //Update Borrower Info
+        public void UpdateBorrower()
         {
-            Console.WriteLine("List of Employees:");
-            foreach (var employee in Borrowers)
+            Console.WriteLine("List of Borrowers:");
+            foreach (var borrower in Borrowers)
             {
-                employee.ShowInfo();
+                borrower.ShowInfo();
             }
 
-            Console.WriteLine("Please enter employee's ID: ");
-            string employeeId = Console.ReadLine();
-            Employee employeeInList = Borrowers.FirstOrDefault(b => b.employeeId.Equals(employeeId));
-            if (employeeInList == null)
+            Console.WriteLine("Please enter borrower's ID: ");
+            string borrowerId = Console.ReadLine();
+            Borrower borrowerInList = Borrowers.FirstOrDefault(b => b.borrowerId.Equals(borrowerId));
+            if (borrowerInList == null)
             {
-                Console.WriteLine("This employee does not exist! Do you want to add new employee? (Y/N)");
-                string choice = Console.ReadLine();
-                while (!choice.Equals("Y", StringComparison.InvariantCultureIgnoreCase)
-                    && !choice.Equals("N", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Console.WriteLine("Invalid choice! Please re-enter your choice: ");
-                    choice = Console.ReadLine();
-                }
-                if (choice.Equals("Y", StringComparison.InvariantCultureIgnoreCase))
-                    employeeInList = AddNewEmployee(employeeId);
-                else 
-                    Console.WriteLine("Operation canceled.");
-                    return;
+                Console.WriteLine("This borrower does not exist in the system.");
+                return;
             }
-            UpdateEmployee(employeeInList);            
+            UpdateBorrower(borrowerInList);            
         }
 
-        private Employee AddNewEmployee(string employeeId)
+        public Borrower AddNewBorrower()
         {
             try
             {
-                Employee newEmployee = new Employee();
-                newEmployee.employeeId = employeeId;
-                newEmployee.InputInfo();
-                Borrowers.Add(newEmployee);
-                Console.WriteLine("New employee added successfully!");
-                return newEmployee;
+                Borrower newBorrower = new Borrower {};
+                newBorrower.InputInfo();
+                Borrowers.Add(newBorrower);
+                Console.WriteLine("New borrower added successfully!");
+                return newBorrower;
             }
             catch (Exception ex)
             {
@@ -216,10 +222,11 @@ namespace Code1651.ASM
             }
         }
 
-        private static void UpdateEmployee(Employee employeeToUpdate)
+
+        private static void UpdateBorrower(Borrower borrowerToUpdate)
         {
-            employeeToUpdate.InputInfo();
-            Console.WriteLine("Employee Updated Successfully!");
+            borrowerToUpdate.InputInfo();
+            Console.WriteLine("Borrower Updated Successfully!");
         }
 
         //======Book Functions=======
@@ -294,38 +301,25 @@ namespace Code1651.ASM
         {
             if (!Books.Any())
             {
-                Console.WriteLine("Currently there are no books to be lent to employees");
+                Console.WriteLine("Currently there are no books to be lent to borrowers");
                 return;
             }
 
-            Console.WriteLine("Enter employee's information: ");
-            Console.WriteLine("Employee's ID: ");
-            string employeeId = Console.ReadLine();
-            Employee employeeInList = Borrowers.FirstOrDefault(b => b.employeeId.Equals(employeeId));
+            Console.WriteLine("Enter borrower's information: ");
+            Console.WriteLine("Borrower's ID: ");
+            string borrowerId = Console.ReadLine();
+            Borrower borrowerInList = Borrowers.FirstOrDefault(b => b.borrowerId.Equals(borrowerId));
 
-            if (employeeInList != null && employeeInList.BookLoans.Any(b => b.returnDate == DateTime.MinValue))
+            if (borrowerInList != null && borrowerInList.BookLoans.Any(b => b.returnDate == DateTime.MinValue))
             {
-                Console.WriteLine("This employee has an unreturned book. Please return the book before borrowing another one.");
+                Console.WriteLine("This borrower has an unreturned book. Please return the book before borrowing another one.");
                 return;
             }
 
-            if (employeeInList == null)
+            if (borrowerInList == null)
             {
-                Console.WriteLine("This employee does not exist in the system. Do you want to add this employee? (Y/N)");
-                string choice = Console.ReadLine();
-                while (!choice.Equals("Y", StringComparison.InvariantCultureIgnoreCase)
-                && !choice.Equals("N", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Console.WriteLine("Invalid choice! Please re-enter your choice: ");
-                    choice = Console.ReadLine();
-                }
-                if (choice.Equals("Y", StringComparison.InvariantCultureIgnoreCase))
-                    employeeInList = AddNewEmployee(employeeId);
-                else
-                {
-                    Console.WriteLine("Operation canceled.");
-                    return;
-                }
+                Console.WriteLine("This borrower does not exist in the system.");
+                return;
             }
 
             Console.WriteLine("Enter the ID of the book to borrow: ");
@@ -355,7 +349,7 @@ namespace Code1651.ASM
 
             int borrowingId = ++lastBorrowingId;
 
-            BookLoan newLoan = new BookLoan(borrowingId, employeeInList, bookToBorrow, DateTime.Now, 0);
+            BookLoan newLoan = new BookLoan(borrowingId, borrowerInList, bookToBorrow, DateTime.Now, 0);
 
             newLoan.InputIssueDate();
             bookToBorrow.quantity--;
@@ -364,7 +358,7 @@ namespace Code1651.ASM
                 bookToBorrow.SetBookAvailableStt(false);
             }
 
-            employeeInList.BookLoans.Add(newLoan);
+            borrowerInList.BookLoans.Add(newLoan);
             BookLoans.Add(newLoan);
 
             Console.WriteLine();
@@ -375,24 +369,24 @@ namespace Code1651.ASM
         //ReceiveBook
         public void ReceiveBook()
         {
-            Console.WriteLine("Please enter the employee's ID who is returning a book: ");
-            string employeeId = Console.ReadLine();
-            Employee employeeInList = Borrowers.FirstOrDefault(b => b.employeeId.Equals(employeeId));
+            Console.WriteLine("Please enter the borrower's ID who is returning a book: ");
+            string borrowerId = Console.ReadLine();
+            Borrower borrowerInList = Borrowers.FirstOrDefault(b => b.borrowerId.Equals(borrowerId));
 
-            if (employeeInList == null)
+            if (borrowerInList == null)
             {
-                Console.WriteLine("This employee does not exist in the system.");
+                Console.WriteLine("This borrower does not exist in the system.");
                 return;
             }
 
-            var loanedBook = employeeInList.BookLoans.FirstOrDefault(b => b.returnDate == DateTime.MinValue);
+            var loanedBook = borrowerInList.BookLoans.FirstOrDefault(b => b.returnDate == DateTime.MinValue);
             if (loanedBook == null)
             {
-                Console.WriteLine("This employee has no books to return.");
+                Console.WriteLine("This borrower has no books to return.");
                 return;
             }
 
-            employeeInList.ShowInfo();
+            borrowerInList.ShowInfo();
             loanedBook.LoanForm();
             loanedBook.bookOnLoan.ShowBookOnLoan();
             loanedBook.InputReturnDate();
@@ -415,7 +409,7 @@ namespace Code1651.ASM
             else
             {
                 int maxBookLoan = 0;
-                foreach (Employee e in Borrowers)
+                foreach (Borrower e in Borrowers)
                 {
                     if (e.BookLoans.Count > maxBookLoan)
                         maxBookLoan = e.BookLoans.Count;
@@ -427,8 +421,8 @@ namespace Code1651.ASM
                     return;
                 }
 
-                Console.WriteLine("The employee who borrows books the most often is: ");
-                foreach (Employee e in Borrowers)
+                Console.WriteLine("The borrower who borrows books the most often is: ");
+                foreach (Borrower e in Borrowers)
                 {
                     if (e.BookLoans.Count == maxBookLoan)
                         e.ShowInfo();
